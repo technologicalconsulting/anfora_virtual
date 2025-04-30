@@ -1,0 +1,239 @@
+-- Crear base de datos
+CREATE DATABASE bd_av;
+
+-- Usar la base creada
+\c bd_av
+
+-- Tabla: Empresa
+CREATE TABLE empresa (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    ruc VARCHAR(20) UNIQUE NOT NULL,
+    logo TEXT,
+    estado BOOLEAN DEFAULT TRUE
+);
+
+-- Tabla: Rol
+CREATE TABLE rol (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    descripcion TEXT
+);
+
+-- Tabla: Usuario
+CREATE TABLE usuario (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    clave_hash TEXT NOT NULL,
+    empresa_id INTEGER REFERENCES empresa(id) ON DELETE CASCADE,
+    rol_id INTEGER REFERENCES rol(id) ON DELETE SET NULL,
+    estado BOOLEAN DEFAULT TRUE
+);
+
+-- Tabla: Menú
+CREATE TABLE menu (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    ruta VARCHAR(150),
+    icono VARCHAR(50)
+);
+
+-- Tabla: Rol_Menu (Control de accesos)
+CREATE TABLE rol_menu (
+    id SERIAL PRIMARY KEY,
+    rol_id INTEGER REFERENCES rol(id) ON DELETE CASCADE,
+    menu_id INTEGER REFERENCES menu(id) ON DELETE CASCADE
+);
+
+-- Tabla: Cliente
+CREATE TABLE cliente (
+    id SERIAL PRIMARY KEY,
+    cedula VARCHAR(20) UNIQUE NOT NULL,
+    nombre VARCHAR(100),
+    telefono VARCHAR(20),
+    email VARCHAR(100)
+);
+
+-- Tabla: Campaña
+CREATE TABLE campaña (
+    id SERIAL PRIMARY KEY,
+    empresa_id INTEGER REFERENCES empresa(id) ON DELETE CASCADE,
+    nombre VARCHAR(150) NOT NULL,
+    fecha_inicio DATE NOT NULL,
+    fecha_fin DATE NOT NULL,
+    tipo_transaccion VARCHAR(20) CHECK (tipo_transaccion IN ('Compra', 'Depósito')),
+    usa_sorteador BOOLEAN DEFAULT TRUE,
+    permite_registro_manual BOOLEAN DEFAULT FALSE,
+    total_ganadores INTEGER DEFAULT 1,
+    max_premios_por_persona INTEGER DEFAULT 1,
+    tipo_cuenta_aceptada VARCHAR(50), -- Ahorros, Corriente, Juvenil, Vivienda, etc.
+    monto_minimo NUMERIC(12,2),
+    monto_maximo NUMERIC(12,2),
+    aplica_por_monto BOOLEAN DEFAULT FALSE
+);
+
+-- Tabla: Premio
+CREATE TABLE premio (
+    id SERIAL PRIMARY KEY,
+    campaña_id INTEGER REFERENCES campaña(id) ON DELETE CASCADE,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    cantidad_total INTEGER NOT NULL DEFAULT 1,
+    cantidad_entregada INTEGER DEFAULT 0,
+    orden INTEGER
+);
+
+-- Tabla: Ticket
+CREATE TABLE ticket (
+    id SERIAL PRIMARY KEY,
+    campaña_id INTEGER REFERENCES campaña(id) ON DELETE CASCADE,
+    cliente_id INTEGER REFERENCES cliente(id) ON DELETE CASCADE,
+    transaccion_id VARCHAR(50),
+    estado VARCHAR(20) CHECK (estado IN ('Activo', 'Ganador', 'Caducado', 'Anulado')) DEFAULT 'Activo',
+    fecha_emision TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla: Histórico de cambios de Ticket
+CREATE TABLE ticket_historial (
+    id SERIAL PRIMARY KEY,
+    ticket_id INTEGER REFERENCES ticket(id) ON DELETE CASCADE,
+    estado_anterior VARCHAR(20),
+    estado_nuevo VARCHAR(20),
+    fecha_cambio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    observaciones TEXT
+);
+
+-- Tabla: Ganador
+CREATE TABLE ganador (
+    id SERIAL PRIMARY KEY,
+    ticket_id INTEGER REFERENCES ticket(id) ON DELETE CASCADE,
+    cliente_id INTEGER REFERENCES cliente(id),
+    campaña_id INTEGER REFERENCES campaña(id),
+    premio_id INTEGER REFERENCES premio(id),
+    medio VARCHAR(20) CHECK (medio IN ('Sistema', 'Manual')),
+    observaciones TEXT,
+    fecha_ganador TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla: Entrega de Premios
+CREATE TABLE entrega_premio (
+    id SERIAL PRIMARY KEY,
+    ganador_id INTEGER REFERENCES ganador(id) ON DELETE CASCADE,
+    estado_entrega VARCHAR(20) CHECK (estado_entrega IN ('Pendiente', 'En proceso', 'Entregado', 'No reclamado')) DEFAULT 'Pendiente',
+    fecha_asignacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_entrega TIMESTAMP,
+    responsable_id INTEGER REFERENCES usuario(id),
+    evidencia_entrega TEXT,
+    observaciones TEXT
+);
+
+-- Tabla: Auditoría de acciones en el sistema
+CREATE TABLE auditoria (
+    id SERIAL PRIMARY KEY,
+    usuario_id INTEGER REFERENCES usuario(id),
+    accion VARCHAR(50), -- CREATE, UPDATE, DELETE, LOGIN, etc.
+    tabla_afectada VARCHAR(50),
+    registro_id INTEGER,
+    fecha_operacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    descripcion TEXT
+);
+
+
+-- Insertar Empresa
+INSERT INTO empresa (nombre, ruc, logo, estado) VALUES
+('Cooperativa de Ahorro San Antonio', '0991234567001', NULL, TRUE);
+
+-- Insertar Roles
+INSERT INTO rol (nombre, descripcion) VALUES
+('Administrador', 'Acceso completo al sistema de ánfora virtual'),
+('Operador', 'Gestión de clientes, tickets y ganadores'),
+('Supervisor', 'Monitoreo de sorteos y entregas');
+
+-- Insertar Usuarios
+INSERT INTO usuario (nombre, email, clave_hash, empresa_id, rol_id, estado) VALUES
+('Administrador General', 'admin@sanantonio.fin.ec', 'admin123', 1, 1, TRUE),
+('Operador Sorteos', 'operador@sanantonio.fin.ec', 'operador123', 1, 2, TRUE),
+('Supervisor de Sorteos', 'supervisor@sanantonio.fin.ec', 'supervisor123', 1, 3, TRUE);
+
+-- Insertar Menús
+INSERT INTO menu (nombre, ruta, icono) VALUES
+('Dashboard', '/dashboard', 'dashboard'),
+('Empresas', '/empresas', 'business'),
+('Usuarios', '/usuarios', 'users'),
+('Clientes', '/clientes', 'user'),
+('Campañas', '/campañas', 'campaign'),
+('Premios', '/premios', 'gift'),
+('Tickets', '/tickets', 'ticket'),
+('Ganadores', '/ganadores', 'trophy'),
+('Entregas', '/entregas', 'truck');
+
+-- Asignar Menús a Roles
+-- Administrador
+INSERT INTO rol_menu (rol_id, menu_id) SELECT 1, id FROM menu;
+-- Operador (solo gestión operativa)
+INSERT INTO rol_menu (rol_id, menu_id) VALUES
+(2, 4), (2, 5), (2, 6), (2, 7), (2, 8), (2, 9);
+-- Supervisor (solo ver)
+INSERT INTO rol_menu (rol_id, menu_id) VALUES
+(3, 1), (3, 4), (3, 8), (3, 9);
+
+-- Insertar Clientes
+INSERT INTO cliente (cedula, nombre, telefono, email) VALUES
+('0101010101', 'Juan Pérez', '0991111111', 'juan.perez@gmail.com'),
+('0202020202', 'María González', '0982222222', 'maria.gonzalez@hotmail.com'),
+('0303030303', 'Carlos Sánchez', '0973333333', 'carlos.sanchez@gmail.com'),
+('0404040404', 'Ana Rodríguez', '0964444444', 'ana.rodriguez@hotmail.com'),
+('0505050505', 'Luis Ramírez', '0955555555', 'luis.ramirez@gmail.com'),
+('0606060606', 'Sofía Torres', '0946666666', 'sofia.torres@hotmail.com'),
+('0707070707', 'Diego Castro', '0937777777', 'diego.castro@gmail.com'),
+('0808080808', 'Camila Ortega', '0928888888', 'camila.ortega@hotmail.com'),
+('0909090909', 'Andrés Molina', '0919999999', 'andres.molina@gmail.com'),
+('1010101010', 'Valentina Herrera', '0901010101', 'valentina.herrera@hotmail.com');
+
+-- Insertar Campaña
+INSERT INTO campaña (
+    empresa_id, nombre, fecha_inicio, fecha_fin, tipo_transaccion,
+    usa_sorteador, permite_registro_manual, total_ganadores, max_premios_por_persona,
+    tipo_cuenta_aceptada, monto_minimo, monto_maximo, aplica_por_monto
+) VALUES (
+    1, 'Sorteo Cuenta de Ahorros - Ánfora Virtual', '2025-05-01', '2025-06-30', 'Depósito',
+    TRUE, FALSE, 5, 1,
+    'Ahorros', 50.00, NULL, TRUE
+);
+
+-- Insertar Premios
+INSERT INTO premio (campaña_id, nombre, descripcion, cantidad_total, cantidad_entregada, orden) VALUES
+(1, 'Smartphone Samsung A34', 'Teléfono inteligente Samsung A34 nuevo', 2, 0, 1),
+(1, 'Tablet Lenovo', 'Tablet para estudiantes', 2, 0, 2),
+(1, 'Tarjeta de Regalo $100', 'Vale de consumo de USD 100', 1, 0, 3);
+
+-- Insertar Tickets para los Clientes (sorteados por depósitos)
+INSERT INTO ticket (campaña_id, cliente_id, transaccion_id, estado, fecha_emision) VALUES
+(1, 1, 'TXN1001', 'Activo', CURRENT_TIMESTAMP),
+(1, 2, 'TXN1002', 'Activo', CURRENT_TIMESTAMP),
+(1, 3, 'TXN1003', 'Activo', CURRENT_TIMESTAMP),
+(1, 4, 'TXN1004', 'Activo', CURRENT_TIMESTAMP),
+(1, 5, 'TXN1005', 'Activo', CURRENT_TIMESTAMP),
+(1, 6, 'TXN1006', 'Activo', CURRENT_TIMESTAMP),
+(1, 7, 'TXN1007', 'Activo', CURRENT_TIMESTAMP),
+(1, 8, 'TXN1008', 'Activo', CURRENT_TIMESTAMP),
+(1, 9, 'TXN1009', 'Activo', CURRENT_TIMESTAMP),
+(1, 10, 'TXN1010', 'Activo', CURRENT_TIMESTAMP);
+
+-- (Opcional) Insertar Ganadores
+INSERT INTO ganador (ticket_id, cliente_id, campaña_id, premio_id, medio, observaciones) VALUES
+(1, 1, 1, 1, 'Sistema', 'Ganador automático Samsung A34'),
+(2, 2, 1, 1, 'Sistema', 'Ganador automático Samsung A34'),
+(3, 3, 1, 2, 'Sistema', 'Ganador automático Tablet'),
+(4, 4, 1, 2, 'Sistema', 'Ganador automático Tablet'),
+(5, 5, 1, 3, 'Sistema', 'Ganador automático Tarjeta $100');
+
+-- (Opcional) Insertar Entrega de Premios
+INSERT INTO entrega_premio (ganador_id, estado_entrega, responsable_id, evidencia_entrega, observaciones) VALUES
+(1, 'Pendiente', 2, NULL, 'Listo para entregar - Samsung A34'),
+(2, 'Pendiente', 2, NULL, 'Listo para entregar - Samsung A34'),
+(3, 'Pendiente', 2, NULL, 'Listo para entregar - Tablet Lenovo'),
+(4, 'Pendiente', 2, NULL, 'Listo para entregar - Tablet Lenovo'),
+(5, 'Pendiente', 2, NULL, 'Listo para entregar - Tarjeta $100');
+

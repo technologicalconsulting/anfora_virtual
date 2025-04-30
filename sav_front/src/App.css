@@ -1,0 +1,255 @@
+/* ==================== Estilos Globales ==================== */
+
+/* Fuente global en todo el proyecto */
+* {
+  font-family: Arial, sans-serif !important;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+
+  overflow-x: hidden;
+}
+
+/* ==================== Inputs y Formularios ==================== */
+
+/* Tamaño del texto escrito en los campos de entrada */
+input,
+textarea,
+select {
+  font-size: 12px !important;
+}
+
+input.form-control {
+  font-size: 12px !important;
+}
+
+/* Bordes e íconos de campos de texto con azul */
+.form-control:focus {
+  border-color: #047dd4 !important;
+  box-shadow: 0 0 0 0.2rem rgba(4, 125, 212, 0.25);
+}
+
+/* ==================== Botones ==================== */
+
+/* Botón color base naranja */
+.btn-success {
+  background-color: #fca853 !important;
+  border-color: #fca853 !important;
+  border-radius: 0.5rem !important;
+  color: #fff;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+/* Hover azul al pasar el mouse */
+.btn-success:hover {
+  background-color: #047dd4 !important;
+  border-color: #047dd4 !important;
+}
+
+/* ==================== Texto de Marca y Tipografías ==================== */
+
+/* Color del título de marca */
+h4,
+.brand-title {
+  font-weight: 700 !important;
+  color: #047dd4 !important;
+}
+
+/* Textos secundarios en gris */
+.secondary-text,
+.form-check-label,
+.text-muted {
+  color: #747474 !important;
+}
+
+body,
+input,
+button,
+label {
+  font-family: Arial, sans-serif !important;
+}
+
+/* ==================== Enlaces ==================== */
+
+/* Estilo general para links tipo botón */
+.custom-link {
+  color: #fca853;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  cursor: pointer;
+}
+
+/* Hover en enlaces */
+.custom-link:hover {
+  color: #047dd4;
+  text-decoration: none;
+}
+
+/* Enlaces como '¿No tienes cuenta?' */
+a.secondary-link {
+  color: #747474;
+  text-decoration: none;
+}
+
+a.secondary-link span {
+  color: #fca853;
+  text-decoration: none;
+}
+
+a.secondary-link span:hover {
+  color: #047dd4;
+  text-decoration: none;
+}
+
+/* ==================== Detalles visuales extra ==================== */
+
+/* Línea inferior decorativa en tarjetas de login */
+.card-login {
+  border-bottom: 4px solid #047dd4 !important;
+}
+
+/* ==================== Menu Lateral ==================== */
+.sidebar {
+  width: 250px;
+  background-color: #047dd4;
+  color: #ffffff;
+  transition: all 0.3s ease;
+
+  min-height: 100vh;
+  overflow-x: hidden;
+  white-space: nowrap;
+}
+
+.sidebar .nav-link {
+  color: #ffffff;
+  font-weight: 500;
+  padding: 10px 15px;
+  transition: all 0.2s ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar .nav-link:hover {
+  background-color: #036bb3;
+  color: #ffffff;
+}
+
+.sidebar .nav-link.active {
+  background-color: #fca853;
+  color: #000000;
+  font-weight: bold;
+}
+
+.sidebar .submenu {
+  display: none;
+}
+
+.sidebar .submenu.show {
+  display: block;
+}
+
+.sidebar .submenu .nav-link {
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar .submenu .nav-link:hover {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.submenu-toggle {
+  cursor: pointer;
+  padding: 10px 15px;
+  font-weight: 500;
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.submenu-toggle:hover {
+  background-color: #036bb3;
+}
+
+.btn-outline-secondary {
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #ffffff;
+  color: #047dd4;
+}
+
+/* ==================== Menu Superior ==================== */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background-color: #047dd4 !important;
+  color: #ffffff;
+  z-index: 1040; /* encima del sidebar */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.topbar .bi {
+  color: #ffffff;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.topbar .bi:hover {
+  color: #fca853;
+}
+
+.dropdown-toggle-no-caret::after {
+  display: none !important;
+}
+
+.dropdown-menu {
+  min-width: 250px;
+  font-size: 0.9rem;
+  border-radius: 0.5rem;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.dropdown-menu a {
+  color: #047dd4;
+  text-decoration: none;
+}
+
+.dropdown-menu a:hover {
+  text-decoration: underline;
+}
+
+.dropdown-menu .btn-outline-danger {
+  border-color: #dc3545;
+  color: #dc3545;
+}
+
+.dropdown-menu .btn-outline-danger:hover {
+  background-color: #dc3545;
+  color: #ffffff;
+}
+
+.dropdown-menu .text-muted {
+  color: #747474 !important;
+}
