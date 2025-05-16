@@ -8,18 +8,15 @@
 
   <ItemGroup>
     <Compile Remove="Migrations\**" />
-    <Compile Remove="Services\NewFolder\**" />
     <Content Remove="Migrations\**" />
-    <Content Remove="Services\NewFolder\**" />
     <EmbeddedResource Remove="Migrations\**" />
-    <EmbeddedResource Remove="Services\NewFolder\**" />
     <None Remove="Migrations\**" />
-    <None Remove="Services\NewFolder\**" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="MailKit" Version="4.12.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.2" />
@@ -28,13 +25,18 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
+    <PackageReference Include="Resend" Version="0.1.1" />
+    <PackageReference Include="SendGrid" Version="9.29.3" />
+    <PackageReference Include="SendGrid.Extensions.DependencyInjection" Version="1.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Services\" />
+    <Folder Include="Features\Login\Dtos\" />
+    <Folder Include="Features\Login\Interfaces\" />
+    <Folder Include="Features\Login\Services\" />
   </ItemGroup>
 
 </Project>

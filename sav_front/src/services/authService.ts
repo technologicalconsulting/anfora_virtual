@@ -70,14 +70,15 @@ export const login = async (
   }
 };
 
-export const sendCedula = (cedula: string) => {
-  return axios.post(`${API_BASE_URL}/reset-password/generate-code`, { cedula })
+export const sendCorreo = (Email: string) => {
+  return axios.post(`${API_BASE_URL}/auth/request-reset`, { Email })
 }
 
-export const verifyCode = (cedula: string, code: string) => {
-  return axios.post(`${API_BASE_URL}/reset-password/verify-code`, { cedula, code })
+export const verifyCode = (Code: string) => {
+  return axios.post(`${API_BASE_URL}/auth/verify-code`, {Code })
 }
 
-export const resetPassword = (cedula: string, password: string) => {
-  return axios.post(`${API_BASE_URL}/reset-password/change-password`, { cedula, password })
+export const resetPassword = (Code: string, NewPassword: string) => {
+  // console.log(NewPassword);
+  return axios.post(`${API_BASE_URL}/auth/reset-password`, { Code, NewPassword })
 }

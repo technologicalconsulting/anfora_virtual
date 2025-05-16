@@ -2,7 +2,7 @@
 
 Este es el frontend del **Sistema de Gestión Empresarial (SGE)** desarrollado por **TCR Technological Consulting & Risk S.A.S.**.  
 Permite a empresas gestionar su estructura organizativa, usuarios, clientes y el control operativo del negocio.
-
+**
 ---
 
 ## 🚀 Tecnologías utilizadas
@@ -70,7 +70,7 @@ Crea un archivo `.env` en la raíz del proyecto con el siguiente contenido:
 
 ```env
 VITE_API_URL=https://tuservidor.com/api
-```
+```**
 
 ---
 
